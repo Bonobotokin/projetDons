@@ -1,0 +1,27 @@
+app/
+├── Domains/
+│   ├── Budget/
+│   │   ├── Models/
+│   │   │   └── Budget.php
+│   │   ├── Services/
+│   │   │   └── BudgetService.php
+│   │   ├── Repositories/
+│   │   │   └── BudgetRepository.php
+│   │   └── DTO/
+│   │       └── BudgetDTO.php
+│   ├── ConversionDon/
+│   │   ├── Models/
+│   │   │   └── ConversionDon.php
+│   │   ├── Services/
+│   │   │   └── ConversionDonService.php
+│   │   ├── Repositories/
+│   │   │   └── ConversionDonRepository.php
+│   │   └── DTO/
+│   │       └── ConversionDonDTO.php
+└── Infrastructure/
+    ├── Persistence/
+    │   ├── Repositories/
+    │   │   └── EloquentBudgetRepository.php
+    │   │   └── EloquentConversionDonRepository.php
+    └── Providers/
+        └── DomainServiceProvider.php
