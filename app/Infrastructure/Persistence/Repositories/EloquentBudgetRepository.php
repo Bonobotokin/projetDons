@@ -1,6 +1,7 @@
 <?php 
 // app/Infrastructure/Persistence/Repositories/EloquentBudgetRepository.php
-namespace App\Infrastructure\Persistence\Repositories;
+
+namespace  App\Infrastructure\Persistence\Repositories;
 
 use App\Domains\Budget\Models\Budget;
 use App\Domains\Budget\Repositories\BudgetRepository;
@@ -17,13 +18,20 @@ class EloquentBudgetRepository implements BudgetRepository
         return Budget::find($id);
     }
 
-    public function findAll(): array
+    public function findByName(string $nom_projet): Budget
     {
-        return Budget::all()->toArray();
+        return Budget::where('nom_projet', $nom_projet)->first();
     }
 
-    public function delete(int $id): void
+    public function findAll(): array
     {
-        Budget::destroy($id);
+        // Récupère tous les budgets avec leurs conversions de dons
+        return Budget::with('conversions')->get()->toArray();
+    }
+    
+
+    public function deleteByName(string $nom_projet): void
+    {
+        Budget::where('nom_projet', $nom_projet)->delete();
     }
 }
