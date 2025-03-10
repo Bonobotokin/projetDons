@@ -1,4 +1,4 @@
-<?php 
+<?php
 // app/Infrastructure/Persistence/Repositories/EloquentBudgetRepository.php
 
 namespace  App\Infrastructure\Persistence\Repositories;
@@ -18,17 +18,36 @@ class EloquentBudgetRepository implements BudgetRepository
         return Budget::find($id);
     }
 
-    public function findByName(string $nom_projet): Budget
+    public function findByName(string $nom_projet): ?Budget
     {
         return Budget::where('nom_projet', $nom_projet)->first();
     }
 
+
     public function findAll(): array
     {
-        // Récupère tous les budgets avec leurs conversions de dons
-        return Budget::with('conversions')->get()->toArray();
+        return Budget::with('conversions')->get()->map(function ($budget) {
+            return [
+                'id' => $budget->id,
+                'nom_projet' => $budget->nom_projet,
+                'montant_total' => $budget->montant_total,
+                'montant_collecte' => $budget->montant_collecte,
+                'reste_a_collecter' => $budget->reste_a_collecter,
+                'actif' => $budget->actif ? 'Actif' : 'Inactif',
+                'conversions' => $budget->conversions->map(function ($conversion) {
+                    return [
+                        'type_don' => $conversion->type_don,
+                        'choix' => $conversion->choix,
+                        'quantite' => $conversion->quantite,
+                        'valeur_unitaire' => $conversion->valeur_unitaire,
+                        'montant_total' => $conversion->quantite * $conversion->valeur_unitaire,
+                    ];
+                }),
+            ];
+        })->toArray();
     }
-    
+
+
 
     public function deleteByName(string $nom_projet): void
     {

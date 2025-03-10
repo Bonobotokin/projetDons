@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('budget_id'); // Clé étrangère vers budgets
             $table->string('type_don');
+            $table->string('choix');
+            $table->integer('quantite')->default(0);
             $table->decimal('valeur_unitaire', 10, 2)->default(0.00); // 10 chiffres au total, 2 chiffres après la virgule
             $table->timestamps();
 

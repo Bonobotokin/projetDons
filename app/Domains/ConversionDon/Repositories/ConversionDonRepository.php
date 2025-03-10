@@ -13,4 +13,8 @@ interface ConversionDonRepository
     public function findAll(): array;
 
     public function delete(int $id): void;
+
+    public function getDons($data);
+
+    public function getTypeChoixDons($data);
 }

@@ -63,4 +63,36 @@ class BudgetService
     {
         $this->budgetRepository->deleteByName($nom_projet);
     }
+
+    public function updateBudget(int $id, float $data): ?Budget
+    {
+        // Récupérer le budget à mettre à jour
+        $budget = $this->budgetRepository->findById($id);
+
+        // Si le budget n'existe pas, retourner null
+        if (!$budget) {
+            Log::error('Le budget avec l\'ID ' . $id . ' n\'a pas été trouvé.');
+            return null;
+        }
+
+        $collecter = (float) $budget->montant_collecte + $data;
+        
+        $montaAtteindre = (float) $budget->montant_total;
+        
+        $resteAfaire = (float) $montaAtteindre - $collecter;
+        
+        // Soustraire la valeur du champ 'montant' (ou tout autre champ nécessaire)
+        $budget->montant_collecte = $collecter;
+        $budget->montant_total = $montaAtteindre;
+        $budget->reste_a_collecter = $resteAfaire;
+
+        // Sauvegarder le budget mis à jour dans la base de données
+        $budget->save();
+
+        // Vérifier si la mise à jour a été effectuée
+        Log::info('Budget mis à jour avec succès. ID : ' . $budget->id);
+
+        // Retourner le budget mis à jour
+        return $budget;
+    }
 }

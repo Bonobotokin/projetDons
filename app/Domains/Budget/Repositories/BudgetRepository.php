@@ -10,9 +10,11 @@ interface BudgetRepository
 
     public function findById(int $id): ?Budget;
 
-    public function findByName(string $nom_projet): Budget;
+    public function findByName(string $nom_projet): ?Budget;
 
     public function findAll(): array;
 
     public function deleteByName(string $nom_projet): void;
+
+
 }

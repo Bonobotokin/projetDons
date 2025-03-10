@@ -26,11 +26,9 @@
                             <thead>
                                 <tr>
                                     <th>Nom</th>
-                                    <th>Budget</th>
-                                    <th>Collecté</th>
-                                    <th>Reste</th>
-                                    <th>Libeller</th>
-                                    <th>Status</th>
+                                    <th>BUDGET</th>
+                                    <th>DONS</th>
+                                    <th>STATUS</th>
 
                                 </tr>
                             </thead>
@@ -43,16 +41,34 @@
                                         <tr class="ligne table-row-hover" data-bs-toggle="modal"
                                             data-bs-target="#budgetModal{{ $loop->index }}">
                                             <td>{{ $budge['nom_projet'] }}</td>
-                                            <td>{{ $budge['montant_total'] }} Ar</td>
-                                            <td>{{ $budge['montant_collecte'] }} Ar</td>
-                                            <td>{{ $budge['reste_a_collecter'] }} Ar</td>
                                             <td>
-                                                <ol>
-                                                    @foreach ($conversions as $dons)
-                                                        <li>{{ $dons['type_don'] }}</li>
-                                                    @endforeach
-                                                </ol>
+                                                <table class="table">
+                                                    <tr>
+                                                        <td><strong>Montant Total</strong></td>
+                                                        <td>{{ $budge['montant_total'] }} Ar</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong>Montant Collecté</strong></td>
+                                                        <td>{{ $budge['montant_collecte'] }} Ar</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong>Reste à Collecter</strong></td>
+                                                        <td>{{ $budge['reste_a_collecter'] }} Ar</td>
+                                                    </tr>
+                                                </table>
                                             </td>
+                                            
+                                            <td>
+                                                <table class="table">
+                                                    @foreach ($conversions as $dons)
+                                                        <tr>
+                                                            <td>{{ $dons['type_don'] }}</td>
+                                                            <td>{{ $dons['quantite'] }}</td>
+                                                        </tr>
+                                                    @endforeach
+                                                </table>
+                                            </td>
+                                            
                                             <td>
                                                 <span
                                                     class="badge {{ $budge['actif'] ? 'badge-success' : 'badge-danger' }}">
@@ -86,17 +102,35 @@
                                                 @method('POST')
                                                 <input type="hidden" name="budget_id" value="{{ $budge['id'] }}">
 
-                                                <div class="mb-3">
-                                                    <label for="nom_projet" class="form-label">Nom du projet</label>
-                                                    <input type="text" class="form-control" id="type_don"
-                                                        name="type_don" placeholder="type de don" required>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="mb-3">
+                                                            <label for="nom_projet" class="form-label">Nom du projet</label>
+                                                            <input type="text" class="form-control" id="type_don" name="type_don" placeholder="Type de don" required>
+                                                        </div>
+                                                
+                                                        <div class="mb-3">
+                                                            <label for="montant_total" class="form-label">Valeur Unitaire</label>
+                                                            <input type="number" class="form-control" id="valeur_unitaire" placeholder="0.00" name="valeur_unitaire" step="0.01" required>
+                                                        </div>
+                                                    </div>
+                                                
+                                                    <div class="col-md-6">
+                                                        <div class="mb-3">
+                                                            <label for="quantite" class="form-label">Quantité</label>
+                                                            <input type="number" class="form-control" id="quantite" value="0" name="quantite" required>
+                                                        </div>
+                                                
+                                                        <div class="form-group">
+                                                            <label for="choix">Type de Don</label>
+                                                            <select id="choix" name="choix" class="form-control">
+                                                                <option value="Matériel">Matériel</option>
+                                                                <option value="Argent">Argent</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
                                                 </div>
-
-                                                <div class="mb-3">
-                                                    <label for="montant_total" class="form-label">Valeur Unitaire</label>
-                                                    <input type="number" class="form-control" id="valeur_unitaire"
-                                                        placeholder="0.00" name="valeur_unitaire" step="0.01" required>
-                                                </div>
+                                                                                                
 
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary"
