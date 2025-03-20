@@ -15,8 +15,8 @@
         }
 
         body {
-            
-            font-family: 'Times New Roman', Times,serif;
+
+            font-family: 'Times New Roman', Times, serif;
             text-align: center;
             background-color: #f1f1f1;
             margin: 0;
@@ -40,46 +40,48 @@
         }
 
         .certificate {
-    background: white;
-    border: 15px solid transparent;
-    padding: 30px;
-    box-sizing: border-box;
-    position: relative;
-    height: 700px;
-    margin: auto;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    text-align: center;
-    font-family: 'Times New Roman', serif;
-}
+            background: white;
+            border: 15px solid transparent;
+            padding: 30px;
+            box-sizing: border-box;
+            position: relative;
+            height: 700px;
+            margin: auto;
 
-.certificate::before {
-    content: "";
-    position: absolute;
-    top: -10px;
-    left: -10px;
-    right: -10px;
-    bottom: -10px;
-    background: linear-gradient(45deg, #d4af37, #f3e5ab, #d4af37);
-    z-index: -1;
-    border-radius: 10px;
-}
+            border: 10px solid #d4af37;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            font-family: 'Times New Roman', serif;
+        }
 
-.certificate::after {
-    content: "";
-    position: absolute;
-    top: -5px;
-    left: -5px;
-    right: -5px;
-    bottom: -5px;
-    border: 10px solid #d4af37;
-    z-index: -1;
-    border-radius: 10px;
-}
+        .certificate::before {
+            content: "";
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: linear-gradient(45deg, #d4af37, #f3e5ab, #d4af37);
+            z-index: -1;
+            border-radius: 10px;
+        }
+
+        .certificate::after {
+            content: "";
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            border: 10px solid #d4af37;
+            z-index: -1;
+            border-radius: 10px;
+        }
 
         .header {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
 
         .logo {
@@ -96,18 +98,20 @@
             text-align: center;
             margin: -7px 13.6745em 0 0;
         }
-        h1{
 
-            font-family: 'Times New Roman', Times,serif !important;
-            font-size: 28pt;
-            
+        h1 {
+            margin: -10px 0 10px 0;
+            color: #1b70b4;
+            font-family: 'Times New Roman', Times, serif !important;
+            font-size: 30pt;
+
         }
 
         .title h2,
         .title h3,
         .title h4 {
-            line-height: 0.5;
-            font-family: 'Times New Roman', Times,serif !important;
+            line-height: 0.2;
+            font-family: 'Times New Roman', Times, serif !important;
             /* Ajustez cette valeur selon le besoin */
         }
 
@@ -117,7 +121,7 @@
             margin: 20px 40px;
             width: 90%;
             line-height: 1.5;
-            font-family: 'Times New Roman', Times,serif;
+            font-family: 'Times New Roman', Times, serif;
         }
 
         .signature {
@@ -136,10 +140,13 @@
             border-top: 2px solid #333;
             padding-top: 1px;
         }
+
         .person-name {
-            font-family: 'Dancing Script', fantasy; /* Application de la police manuscrite */
+            font-family: 'Dancing Script', fantasy;
+            /* Application de la police manuscrite */
             font-size: 26pt;
             font-weight: bold;
+            margin: 10px;
         }
     </style>
 </head>

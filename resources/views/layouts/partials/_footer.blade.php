@@ -8,15 +8,7 @@
                 >Copyright ©
                 <a href="#" target="_blank"
                     >TSANGAMILA Tokin;ny Fantenana </a
-                >2021</span
-            >
-            <span
-                class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center"
-                >Only the best
-                <a href="#" target="_blank">
-                    
-                </a>
-                templates</span
+                >2024</span
             >
         </div>
     </div>
