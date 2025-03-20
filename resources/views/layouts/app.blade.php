@@ -19,6 +19,40 @@
     <link rel="shortcut icon" href="{{ asset('assets/images/favicon.png') }}" />
 </head>
 <style>
+
+.select-container {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        select {
+            font-size: 16px;
+            padding: 12px 20px;
+            border: 2px solid #5b4caf;
+            border-radius: 5px;
+            background-color: white;
+            color: #333;
+            cursor: pointer;
+            width: 200px;
+            transition: all 0.3s ease;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #5b4caf;
+            box-shadow: 0 0 8px rgba(102, 83, 181, 0.5);
+        }
+
+        option {
+            padding: 10px;
+        }
+
+        /* Style pour rendre le texte d'option plus lisible */
+        option:hover {
+            background-color: #f1f1f1;
+        }
     .logo-text {
         font-size: 40px;
         font-weight: bold;
@@ -103,6 +137,8 @@
         </div>
         <!-- page-body-wrapper ends -->
     </div>
+
+    
     <script src="{{ asset('assets/vendors/base/vendor.bundle.base.js') }}"></script>
     <script src="{{ asset('assets/js/template.js') }}"></script>
     <script src="{{ asset('assets/vendors/chart.js/Chart.min.js') }}"></script>
@@ -241,6 +277,26 @@
         });
     </script>
 
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let changeView = document.getElementById("changeView");
+        let rapportView = document.getElementById("rapportView");
+        let listeView = document.getElementById("listeView");
+
+        // Assurez-vous que "rapportView" est bien masqué par défaut
+        rapportView.style.display = "none";
+        listeView.style.display = "flex"; // Si vous voulez afficher "liste" par défaut
+
+        // Ajout de l'événement pour changer la vue
+        changeView.addEventListener("change", function () {
+            let selectedValue = this.value;
+
+            rapportView.style.display = selectedValue === "rapport" ? "flex" : "none";
+            listeView.style.display = selectedValue === "liste" ? "flex" : "none";
+        });
+    });
+</script>
 
 </body>
 

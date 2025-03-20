@@ -59,6 +59,41 @@ class BudgetService
         return $this->budgetRepository->findAll();
     }
 
+    public function navigation(): array
+    {
+        return Budget::with('conversions')
+            ->get()
+            ->filter(fn($budget) => strtolower($budget->actif) === 'actif') // Filtrage des budgets actifs
+            ->map(function ($budget) {
+                return [
+                    'id' => $budget->id,
+                    'nom_projet' => $budget->nom_projet,
+                    'montant_total' => $budget->montant_total,
+                    'montant_collecte' => $budget->montant_collecte,
+                    'reste_a_collecter' => $budget->reste_a_collecter,
+                    'actif' => $budget->actif,
+                    'conversions' => $budget->conversions->map(function ($conversion) {
+                        $montantTotal = ($conversion->choix === "Matériel")
+                            ? $conversion->quantite * $conversion->valeur_unitaire
+                            : $conversion->valeur_unitaire;
+
+                        return [
+                            'type_don' => $conversion->type_don,
+                            'choix' => $conversion->choix,
+                            'quantite' => $conversion->quantite,
+                            'valeur_unitaire' => $conversion->valeur_unitaire,
+                            'montant_total' => $montantTotal,
+                        ];
+                    }),
+                ];
+            })
+            ->values() // Réindexe les clés après le filtrage
+            ->toArray();
+    }
+
+
+
+
     public function deleteBudgetByName(string $nom_projet): void
     {
         $this->budgetRepository->deleteByName($nom_projet);
@@ -66,6 +101,8 @@ class BudgetService
 
     public function updateBudget(int $id, float $data): ?Budget
     {
+
+
         // Récupérer le budget à mettre à jour
         $budget = $this->budgetRepository->findById($id);
 
@@ -76,11 +113,11 @@ class BudgetService
         }
 
         $collecter = (float) $budget->montant_collecte + $data;
-        
+
         $montaAtteindre = (float) $budget->montant_total;
-        
+
         $resteAfaire = (float) $montaAtteindre - $collecter;
-        
+
         // Soustraire la valeur du champ 'montant' (ou tout autre champ nécessaire)
         $budget->montant_collecte = $collecter;
         $budget->montant_total = $montaAtteindre;

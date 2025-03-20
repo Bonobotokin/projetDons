@@ -1,6 +1,7 @@
 <?php
 namespace App\Domains\ConversionDon\Services;
 
+use App\Domains\Budget\Models\Budget;
 use App\Domains\ConversionDon\Models\ConversionDon;
 use App\Domains\ConversionDon\Repositories\ConversionDonRepository;
 use Illuminate\Support\Facades\Log;
@@ -21,8 +22,11 @@ class ConversionDonService
         Log::info('Début de la création du ConversionDon avec les données : ', $data);
 
         $conversionDon = new ConversionDon($data);
+        
         $this->conversionDonRepository->save($conversionDon);  // Sauvegarde via le repository
 
+
+        
         // Ajouter un log pour confirmer que l'enregistrement a été effectué
         Log::info('ConversionDon créé avec succès. ID : ' . $conversionDon->id);
 

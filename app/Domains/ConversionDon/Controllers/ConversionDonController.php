@@ -1,6 +1,7 @@
 <?php 
 namespace App\Domains\ConversionDon\Controllers;
 
+use App\Domains\Budget\Models\Budget;
 use App\Domains\ConversionDon\Services\ConversionDonService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;  // Assurez-vous d'utiliser cette classe
@@ -38,7 +39,13 @@ class ConversionDonController extends Controller
         try {
             // Créer une nouvelle conversion de don
             $conversionDon = $this->conversion_don_service->createConversionDon($validated);
-    
+            
+
+            $getBudget = Budget::where('id', $conversionDon["budget_id"])->first();
+
+            $getBudget->actif = "Actif";
+
+            $getBudget->save();
             // Logique supplémentaire si nécessaire (ex: enregistrement d'autres données)
     
             // Si tout se passe bien, on valide la transaction

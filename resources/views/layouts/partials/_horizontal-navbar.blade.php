@@ -6,7 +6,7 @@
                     <span class="logo-text text-dark">G-DONS</span>
 
                 </div>
-                <ul class="navbar-nav navbar-nav-right">
+                {{-- <ul class="navbar-nav navbar-nav-right">
                     <li class="nav-item nav-profile dropdown">
                         <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" id="profileDropdown">
                             <span class="nav-profile-name">Admin</span>
@@ -29,7 +29,7 @@
                 <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
                     data-toggle="horizontal-menu-toggle">
                     <span class="mdi mdi-menu"></span>
-                </button>
+                </button> --}}
             </div>
         </div>
     </nav>

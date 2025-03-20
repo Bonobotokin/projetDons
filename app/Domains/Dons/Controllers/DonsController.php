@@ -47,21 +47,17 @@ class DonsController extends Controller
         
         $donsAll = $this->donsService->getDonsByIdBudget($budget["id"]);
 
+        $navigation = $this->budgetService->navigation();
         
-
-        $navigation = $this->budgetService->getAll();
-
-        
-        $data = $this->donsService->getDonsWithTotals($budget["id"]);
-        $donsWithTotals = $this->donsService->getDonsWithTotals($budget->id);
         $totals = $this->donsService->getDonsWithTotals($budget["id"]);
+
+        
         return view('budget.show', [
             'budget' => $budget,
             'navigation' => $navigation,
             'dons' => $donsAll,
             'typeConversion' => $typeConversion,
             'choixDons' => $getChoixDons,
-            'donsWithTotals' => $donsWithTotals,
             'totals' => $totals,
         ]);
     }
@@ -70,11 +66,11 @@ class DonsController extends Controller
     public function store(Request $request)
     {
         DB::beginTransaction();
-
+        
         try {
             $data = $request->all();
             $choix = $request['choix'];
-            $budgetId = (int) $request['budget_id'];
+            $budgetId = (int) $request['budger_id'];
            
             // Gestion de la conversion de don personnalisée
             // if ($request->filled('type_don_2')) {
@@ -82,6 +78,7 @@ class DonsController extends Controller
             // }
 
             // Traitement principal du don
+            
             $this->processDon($choix, $data, $budgetId);
 
             DB::commit();
@@ -135,6 +132,7 @@ class DonsController extends Controller
             : $this->conversionDonService->getTotalValue($data["type_don"], $quantity);
         
         $this->donsService->createDon($data, $amount);
+        
         $this->budgetService->updateBudget($budgetId, $amount);
     }
 }

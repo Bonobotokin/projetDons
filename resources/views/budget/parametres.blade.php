@@ -22,26 +22,33 @@
                 <div class="card-body">
                     <h4 class="card-title">Listes des Projets</h4>
                     <div class="table-responsive">
-                        <table class="table table-striped">
+                        <table class="table table-bordered">
                             <thead>
+                                <tr class="text-center">
+                                    <th rowspan="2">Nom</th>
+                                    <th colspan="2">BUDGET</th>
+                                    <th colspan="3">DONS</th>
+                                    <th rowspan="2">STATUS</th>
+                                    <th rowspan="2">ACTION</th>
+                                </tr>
                                 <tr>
                                     <th>Nom</th>
-                                    <th>BUDGET</th>
-                                    <th>DONS</th>
-                                    <th>STATUS</th>
-
+                                    <th>Somme</th>
+                                    <th>Nom</th>
+                                    <th>Quantité</th>
+                                    <th>Somme</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @if (isset($navigation) && count($navigation) > 0)
-                                    @foreach ($navigation as $budge)
+                                @if (isset($budget) && count($budget) > 0)
+                                    @foreach ($budget as $budge)
                                         @php
                                             $conversions = $budge['conversions'];
                                         @endphp
-                                        <tr class="ligne table-row-hover" data-bs-toggle="modal"
-                                            data-bs-target="#budgetModal{{ $loop->index }}">
+                                        <tr class="ligne table-row-hover">
                                             <td>{{ $budge['nom_projet'] }}</td>
-                                            <td>
+                                            <td colspan="2">
                                                 <table class="table">
                                                     <tr>
                                                         <td><strong>Montant Total</strong></td>
@@ -57,34 +64,47 @@
                                                     </tr>
                                                 </table>
                                             </td>
-                                            
-                                            <td>
-                                                <table class="table">
+
+                                            <!-- Affichage des dons dans des colonnes distinctes -->
+                                            <td colspan="3">
+                                                <table class="table table-sm">
                                                     @foreach ($conversions as $dons)
                                                         <tr>
                                                             <td>{{ $dons['type_don'] }}</td>
                                                             <td>{{ $dons['quantite'] }}</td>
+                                                            <td>{{ $dons['montant_total'] }} Ar</td>
                                                         </tr>
                                                     @endforeach
                                                 </table>
                                             </td>
-                                            
                                             <td>
-                                                <span
-                                                    class="badge {{ $budge['actif'] ? 'badge-success' : 'badge-danger' }}">
-                                                    {{ $budge['actif'] ? 'Actif' : 'Inactif' }}
+                                                <span class="badge bg-opacity-10 bg-{{ strtolower($budge['actif']) === 'actif' ? 'success' : 'danger' }} text-{{ strtolower($budge['actif']) === 'actif' ? 'success' : 'danger' }} d-inline-flex align-items-center py-2 px-3">
+                                                    <span class="bullet bullet-{{ strtolower($budge['actif']) === 'actif' ? 'success' : 'danger' }} bullet-sm me-2"></span>
+                                                    {{ $budge['actif'] }}
                                                 </span>
+                                            </td>
+                                            <td style="width: 20%">
+                                                <div class="template-demo">
+                                                    <button type="button" class="btn btn-outline-warning btn-fw"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#updateBudgetModal{{ $loop->index }}">Mettre à
+                                                        jour</button>
+                                                    <button type="button" class="btn btn-outline-primary btn-fw"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#budgetModal{{ $loop->index }}">Ajouter Type
+                                                        Dons</button>
+
                                             </td>
                                         </tr>
                                     @endforeach
                                 @endif
-
                             </tbody>
                         </table>
 
+
                         <!-- ✅ Placer les modales en dehors de la boucle -->
-                        @if (isset($navigation) && count($navigation) > 0)
-                            @foreach ($navigation as $budge)
+                        @if (isset($budget) && count($budget) > 0)
+                            @foreach ($budget as $budge)
                                 <div class="modal fade" id="budgetModal{{ $loop->index }}" tabindex="-1"
                                     aria-labelledby="modalLabel{{ $loop->index }}" aria-hidden="true">
                                     <div class="modal-dialog">
@@ -105,22 +125,27 @@
                                                 <div class="row">
                                                     <div class="col-md-6">
                                                         <div class="mb-3">
-                                                            <label for="nom_projet" class="form-label">Nom du projet</label>
-                                                            <input type="text" class="form-control" id="type_don" name="type_don" placeholder="Type de don" required>
+                                                            <label for="nom_projet" class="form-label">Type de Don</label>
+                                                            <input type="text" class="form-control" id="type_don"
+                                                                name="type_don" placeholder="Type de don" required>
                                                         </div>
-                                                
+
                                                         <div class="mb-3">
-                                                            <label for="montant_total" class="form-label">Valeur Unitaire</label>
-                                                            <input type="number" class="form-control" id="valeur_unitaire" placeholder="0.00" name="valeur_unitaire" step="0.01" required>
+                                                            <label for="montant_total" class="form-label">Valeur
+                                                                Unitaire</label>
+                                                            <input type="number" class="form-control" id="valeur_unitaire"
+                                                                placeholder="0.00" name="valeur_unitaire" step="0.01"
+                                                                required>
                                                         </div>
                                                     </div>
-                                                
+
                                                     <div class="col-md-6">
                                                         <div class="mb-3">
                                                             <label for="quantite" class="form-label">Quantité</label>
-                                                            <input type="number" class="form-control" id="quantite" value="0" name="quantite" required>
+                                                            <input type="number" class="form-control" id="quantite"
+                                                                value="0" name="quantite" required>
                                                         </div>
-                                                
+
                                                         <div class="form-group">
                                                             <label for="choix">Type de Don</label>
                                                             <select id="choix" name="choix" class="form-control">
@@ -128,9 +153,73 @@
                                                                 <option value="Argent">Argent</option>
                                                             </select>
                                                         </div>
+
+                                                        <div class="form-group">
+                                                            <p class="mb-2">Activer</p>
+                                                            <label class="toggle-switch toggle-switch-success">
+                                                                <input type="checkbox" name="activer">
+                                                                <span class="toggle-slider round"></span>
+                                                            </label>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                                                                
+
+
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">Fermer</button>
+                                                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="modal fade" id="updateBudgetModal{{ $loop->index }}" tabindex="-1"
+                                    aria-labelledby="modalLabel{{ $loop->index }}" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="modalLabel{{ $loop->index }}">
+                                                    Mettre à jour le Budgete : {{ $budge['nom_projet'] }}
+                                                </h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Fermer"></button>
+                                            </div>
+
+                                            <form action="{{ route('update.budget') }}" method="POST" class="modal-body">
+                                                @csrf
+                                                @method('PUT')
+                                                <input type="hidden" name="budget_id" value="{{ $budge['id'] }}">
+
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="mb-3">
+                                                            <label for="nom_projet" class="form-label">Nom du
+                                                                projet</label>
+                                                            <input type="text" class="form-control" id="nom_projet"
+                                                                name="nom_projet" value="{{ $budge['nom_projet'] }}"
+                                                                required>
+                                                        </div>
+
+                                                        <div class="mb-3">
+                                                            <label for="montant_total" class="form-label">Budget (Ar)</label>
+                                                            <input type="number" class="form-control" id="montant_total"
+                                                                value="{{ $budge['montant_total'] }}"
+                                                                name="montant_total" step="0.01" required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <p class="mb-2">Activer</p>
+                                                            <label class="toggle-switch toggle-switch-success">
+                                                                <input type="checkbox" {{ strtolower($budge['actif']) === 'actif' ? 'checked' : '' }} name="activer">
+                                                                <span class="toggle-slider round"></span>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
 
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary"

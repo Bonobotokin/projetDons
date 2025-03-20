@@ -67,31 +67,31 @@ class EloquentDonsRepository implements DonRepository
 
 
     public function getDonsWithTotals($budget_id)
-{
-    // Récupérer les totaux par type de don pour un budget donné
-    $totals = DB::table('dons')
-        ->join('conversion_dons', 'dons.type_don', '=', 'conversion_dons.id')
-        ->select(
-            'conversion_dons.type_don',
-            DB::raw('SUM(dons.montant) as total_montant'),
-            DB::raw('(SUM(conversion_dons.quantite) - SUM(dons.quantite)) as quantite_restante')
-        )
-        ->where('conversion_dons.budget_id', $budget_id)
-        ->groupBy('conversion_dons.type_don')
-        ->get();
+    {
+        // Récupérer les totaux par type de don pour un budget donné
+        $totals = DB::table('dons')
+            ->join('conversion_dons', 'dons.type_don', '=', 'conversion_dons.id')
+            ->select(
+                'conversion_dons.type_don',
+                'conversion_dons.choix',
+                DB::raw('SUM(CASE WHEN conversion_dons.choix = "Argent" THEN dons.montant ELSE 0 END) as total_montant'),
+                DB::raw('SUM(CASE WHEN conversion_dons.choix = "Matériel" THEN (conversion_dons.quantite - dons.quantite) ELSE 0 END) as quantite_restante_materiel'),
+                DB::raw('SUM(CASE WHEN conversion_dons.choix = "Argent" THEN (conversion_dons.valeur_unitaire - dons.montant) ELSE 0 END) as quantite_restante_argent')
+            )
+            ->where('conversion_dons.budget_id', $budget_id)
+            ->groupBy('conversion_dons.type_don', 'conversion_dons.choix', 'conversion_dons.valeur_unitaire')
+            ->get();
 
-    
+        // Convertir le résultat en tableau associatif pour faciliter l'utilisation dans la vue
+        $result = [];
+        foreach ($totals as $row) {
+            $result[$row->type_don] = [
+                'total_montant'     => $row->choix === "Argent" ? $row->total_montant : null,
+                'quantite_restante' => $row->choix === "Matériel" ? $row->quantite_restante_materiel : ($row->choix === "Argent" ? $row->quantite_restante_argent : null),
+            ];
+        }
 
-    // Convertir le résultat en tableau associatif pour faciliter l'utilisation dans la vue
-    $result = [];
-    foreach ($totals as $row) {
-        $result[$row->type_don] = [
-            'total_montant'     => $row->total_montant,
-            'quantite_restante' => $row->quantite_restante,
-        ];
+
+        return $result;
     }
-    
-    return $result;
-}
-
 }

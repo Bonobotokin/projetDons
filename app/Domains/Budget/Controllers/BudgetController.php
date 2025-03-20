@@ -21,7 +21,7 @@ class BudgetController extends Controller
      */
     public function index()
     {
-        $budgets = $this->budgetService->getAll();
+        $budgets = $this->budgetService->navigation();
 
         if ($budgets > 0) {
             return view('budget.parametres', compact('budgets'));
@@ -58,6 +58,48 @@ class BudgetController extends Controller
         }
     }
 
+    public function update(Request $request)
+    {
+
+        
+        $validated = $request->validate([
+            'budget_id' => 'required|exists:budgets,id',
+            'nom_projet' => 'required|string|max:255',
+            'montant_total' => 'required|numeric|min:0',
+            'activer' => 'string',
+        ], [
+            'budget_id.required' => 'L\'identifiant du budget est requis.',
+            'budget_id.exists' => 'Le budget spécifié n\'existe pas.',
+            // ... autres messages de validation
+        ]);
+
+        try {
+            $active = null;
+            if ($request->has('activer') === TRUe)
+            {
+                $active = "Actif";
+            }
+            else {
+                $active = "Non actif";
+            }
+
+            
+            $budget = Budget::findOrFail($validated['budget_id']);
+            $budget->nom_projet = $validated['nom_projet'];
+            $budget->montant_total = $validated['montant_total'];
+            $budget->actif = $active; 
+            $budget->save();
+
+            return redirect()->route('parametres')
+                ->with('success', 'Le budget a été mis à jour avec succès!');
+        } catch (\Exception $e) {
+            return redirect()->route('parametres')
+                ->with('error', 'Une erreur est survenue lors de la mise à jour du budget.');
+        }
+    }
+
+
+
     /**
      * Affiche un budget spécifique.
      */
@@ -65,12 +107,12 @@ class BudgetController extends Controller
     {
         $budget = $this->budgetService->getBudgetByName($nom_projet);
 
-        $navigation = $this->budgetService->getAll();
+        $navigation = $this->budgetService->navigation();
         if (!$budget) {
             return redirect()->route('parametres')->with('error', 'Budget introuvable.');
         }
 
-        return view('budget.show', compact('budget','navigation'));
+        return view('budget.show', compact('budget', 'navigation'));
     }
 
     /**
@@ -78,9 +120,9 @@ class BudgetController extends Controller
      */
     public function parametres()
     {
-        $navigation = $this->budgetService->getAll();
-        
-        return view('budget.parametres', compact('navigation'));
+        $budget = $this->budgetService->getAll();
+        $navigation = $this->budgetService->navigation();
+        return view('budget.parametres', compact('navigation', 'budget'));
     }
 
     /**
