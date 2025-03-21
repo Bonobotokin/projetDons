@@ -22,7 +22,7 @@
                 <div class="card-body">
                     <h4 class="card-title">Listes des Projets</h4>
                     <div class="table-responsive">
-                        <table class="table table-bordered">
+                        <table id="" class="table table-bordered table-bordered table-hover">
                             <thead>
                                 <tr class="text-center">
                                     <th rowspan="2">Nom</th>
@@ -52,15 +52,15 @@
                                                 <table class="table">
                                                     <tr>
                                                         <td><strong>Montant Total</strong></td>
-                                                        <td>{{ $budge['montant_total'] }} Ar</td>
+                                                        <td>{{ number_format($budge['montant_total'], 2, '.', ',') }}</td>
                                                     </tr>
                                                     <tr>
                                                         <td><strong>Montant Collecté</strong></td>
-                                                        <td>{{ $budge['montant_collecte'] }} Ar</td>
+                                                        <td>{{ number_format($budge['montant_collecte'], 2, '.', ',') }}</td>
                                                     </tr>
                                                     <tr>
                                                         <td><strong>Reste à Collecter</strong></td>
-                                                        <td>{{ $budge['reste_a_collecter'] }} Ar</td>
+                                                        <td>{{ number_format($budge['reste_a_collecter'], 2, '.', ',') }}</td>
                                                     </tr>
                                                 </table>
                                             </td>
@@ -72,14 +72,16 @@
                                                         <tr>
                                                             <td>{{ $dons['type_don'] }}</td>
                                                             <td>{{ $dons['quantite'] }}</td>
-                                                            <td>{{ $dons['montant_total'] }} Ar</td>
+                                                            <td>{{ number_format($dons['montant_total'], 2, '.', ',') }}</td>
                                                         </tr>
                                                     @endforeach
                                                 </table>
                                             </td>
                                             <td>
-                                                <span class="badge bg-opacity-10 bg-{{ strtolower($budge['actif']) === 'actif' ? 'success' : 'danger' }} text-{{ strtolower($budge['actif']) === 'actif' ? 'success' : 'danger' }} d-inline-flex align-items-center py-2 px-3">
-                                                    <span class="bullet bullet-{{ strtolower($budge['actif']) === 'actif' ? 'success' : 'danger' }} bullet-sm me-2"></span>
+                                                <span
+                                                    class="badge bg-opacity-10 bg-{{ strtolower($budge['actif']) === 'actif' ? 'success' : 'danger' }} text-{{ strtolower($budge['actif']) === 'actif' ? 'success' : 'danger' }} d-inline-flex align-items-center py-2 px-3">
+                                                    <span
+                                                        class="bullet bullet-{{ strtolower($budge['actif']) === 'actif' ? 'success' : 'danger' }} bullet-sm me-2"></span>
                                                     {{ $budge['actif'] }}
                                                 </span>
                                             </td>
@@ -106,12 +108,13 @@
                         @if (isset($budget) && count($budget) > 0)
                             @foreach ($budget as $budge)
                                 <div class="modal fade" id="budgetModal{{ $loop->index }}" tabindex="-1"
-                                    aria-labelledby="modalLabel{{ $loop->index }}" aria-hidden="true">
+                                    aria-labelledby="modalLabel{{ $loop->index }}" aria-hidden="true"
+                                    data-bs-backdrop="static" data-bs-keyboard="false">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <h5 class="modal-title" id="modalLabel{{ $loop->index }}">
-                                                    Enregistrer les don de : {{ $budge['nom_projet'] }}
+                                                    Enregistrer les dons de : {{ $budge['nom_projet'] }}
                                                 </h5>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                     aria-label="Fermer"></button>
@@ -125,18 +128,21 @@
                                                 <div class="row">
                                                     <div class="col-md-6">
                                                         <div class="mb-3">
-                                                            <label for="nom_projet" class="form-label">Type de Don</label>
+                                                            <label for="type_don" class="form-label">Type de Don</label>
                                                             <input type="text" class="form-control" id="type_don"
                                                                 name="type_don" placeholder="Type de don" required>
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="montant_total" class="form-label">Valeur
+                                                            <label for="valeur_unitaire{{ $loop->index }}"
+                                                                class="form-label">Valeur
                                                                 Unitaire</label>
-                                                            <input type="number" class="form-control" id="valeur_unitaire"
-                                                                placeholder="0.00" name="valeur_unitaire" step="0.01"
-                                                                required>
+                                                            <input type="text" class="form-control"
+                                                                id="valeur_unitaire{{ $loop->index }}"
+                                                                name="valeur_unitaire"
+                                                                value="{{ number_format(0, 2, '.', ',') }}" required>
                                                         </div>
+
                                                     </div>
 
                                                     <div class="col-md-6">
@@ -148,22 +154,13 @@
 
                                                         <div class="form-group">
                                                             <label for="choix">Type de Don</label>
-                                                            <select id="choix" name="choix" class="form-control">
+                                                            <select id="choix" name="choix" class="custom-select">
                                                                 <option value="Matériel">Matériel</option>
                                                                 <option value="Argent">Argent</option>
                                                             </select>
                                                         </div>
-
-                                                        <div class="form-group">
-                                                            <p class="mb-2">Activer</p>
-                                                            <label class="toggle-switch toggle-switch-success">
-                                                                <input type="checkbox" name="activer">
-                                                                <span class="toggle-slider round"></span>
-                                                            </label>
-                                                        </div>
                                                     </div>
                                                 </div>
-
 
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary"
@@ -175,8 +172,10 @@
                                     </div>
                                 </div>
 
+
                                 <div class="modal fade" id="updateBudgetModal{{ $loop->index }}" tabindex="-1"
-                                    aria-labelledby="modalLabel{{ $loop->index }}" aria-hidden="true">
+                                    aria-labelledby="modalLabel{{ $loop->index }}" aria-hidden="true"
+                                    data-bs-backdrop="static" data-bs-keyboard="false">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <div class="modal-header">
@@ -187,7 +186,8 @@
                                                     aria-label="Fermer"></button>
                                             </div>
 
-                                            <form action="{{ route('update.budget') }}" method="POST" class="modal-body">
+                                            <form action="{{ route('update.budget') }}" method="POST"
+                                                class="modal-body">
                                                 @csrf
                                                 @method('PUT')
                                                 <input type="hidden" name="budget_id" value="{{ $budge['id'] }}">
@@ -203,17 +203,23 @@
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="montant_total" class="form-label">Budget (Ar)</label>
-                                                            <input type="number" class="form-control" id="montant_total"
-                                                                value="{{ $budge['montant_total'] }}"
-                                                                name="montant_total" step="0.01" required>
+                                                            <label for="montant_total{{ $loop->index }}"
+                                                                class="form-label">Budget
+                                                                )
+                                                            </label>
+                                                            <input type="text" class="form-control"
+                                                                id="montant_total{{ $loop->index }}"
+                                                                value="{{ number_format($budge['montant_total'], 2, '.', ',') }}"
+                                                                name="montant_total" required>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <p class="mb-2">Activer</p>
                                                             <label class="toggle-switch toggle-switch-success">
-                                                                <input type="checkbox" {{ strtolower($budge['actif']) === 'actif' ? 'checked' : '' }} name="activer">
+                                                                <input type="checkbox"
+                                                                    {{ strtolower($budge['actif']) === 'actif' ? 'checked' : '' }}
+                                                                    name="activer">
                                                                 <span class="toggle-slider round"></span>
                                                             </label>
                                                         </div>
@@ -237,25 +243,23 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-3 grid-margin stretch-card">
+        <div class="col-lg-3 grid-margin stretch-card fixed-right">
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title">Enregistrer Nouveaux Projets</h4>
                     <form action="{{ route('budgets.store') }}" method="POST">
                         @csrf
                         <div class="form-group row">
-                            <div class="col">
+                            <div class="col-12">
                                 <label>Nom</label>
                                 <div id="the-basics">
-                                    <input class="typeahead" type="text" name="nom_projet" placeholder="Ezaka Trano"
-                                        required>
+                                    <input class="typeahead" type="text" name="nom_projet" placeholder="Ezaka Trano" required>
                                 </div>
                             </div>
-                            <div class="col">
-                                <label>Budget (Ar)</label>
+                            <div class="col-12">
+                                <label>Budget )</label>
                                 <div id="bloodhound">
-                                    <input class="typeahead" type="number" name="montant_total" placeholder="0.00"
-                                        required>
+                                    <input class="typeahead" id="montant_budget" type="text" name="montant_total" placeholder="0.00" value="{{ number_format(0, 2, '.', ',') }}" required>
                                 </div>
                             </div>
                         </div>
@@ -263,9 +267,9 @@
                         <a href="{{ route('budgets.index') }}" class="btn btn-light">Annuler</a>
                         <button type="submit" class="btn btn-primary me-2">Enregistrer</button>
                     </form>
-
                 </div>
             </div>
         </div>
+        
     </div>
 @endsection

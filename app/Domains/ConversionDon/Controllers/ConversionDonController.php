@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 namespace App\Domains\ConversionDon\Controllers;
 
 use App\Domains\Budget\Models\Budget;
@@ -24,7 +25,7 @@ class ConversionDonController extends Controller
             'budget_id' => 'required|exists:budgets,id',
             'type_don' => 'required|string|max:255',
             'choix' => 'required|string|max:255',
-            'valeur_unitaire' => 'required|numeric|min:0',
+            'valeur_unitaire' => 'required',
             'quantite' => 'required|numeric|min:0',
         ], [
             'type_don.required' => 'Le nom du projet est requis.',
@@ -32,14 +33,19 @@ class ConversionDonController extends Controller
             'valeur_unitaire.numeric' => 'Le montant total doit être un nombre.',
             'valeur_unitaire.min' => 'Le montant total ne peut pas être inférieur à 0.',
         ]);
-    
+        
         // Commencer une transaction
         DB::beginTransaction();
-        
+
         try {
             // Créer une nouvelle conversion de don
+
+            // Nettoyer le montant_total pour supprimer les séparateurs
+            $validated['valeur_unitaire'] = str_replace(',', '', $validated['valeur_unitaire']); // Supprime les virgules
+            $validated['valeur_unitaire'] = floatval($validated['valeur_unitaire']);
+
             $conversionDon = $this->conversion_don_service->createConversionDon($validated);
-            
+
 
             $getBudget = Budget::where('id', $conversionDon["budget_id"])->first();
 
@@ -47,10 +53,10 @@ class ConversionDonController extends Controller
 
             $getBudget->save();
             // Logique supplémentaire si nécessaire (ex: enregistrement d'autres données)
-    
+
             // Si tout se passe bien, on valide la transaction
             DB::commit();
-    
+
             // Retourner un message de succès avec les informations du don créé
             return redirect()->route('parametres')
                 ->with('success', 'Le projet a été créé avec succès!')
@@ -59,12 +65,11 @@ class ConversionDonController extends Controller
             dd($e);
             // Si une erreur se produit, on annule la transaction
             DB::rollBack();
-    
+
             // Retourner un message d'erreur
             return redirect()->route('parametres')
                 ->with('error', 'Une erreur est survenue lors de la création du projet. Veuillez réessayer.')
                 ->with('exception', $e->getMessage());
         }
     }
-    
 }

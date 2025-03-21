@@ -143,10 +143,9 @@
                             data-bs-target="#createDonModal">
                             Ajouter un Don
                         </button>
-
                         <!-- Modal -->
                         <div class="modal fade" id="createDonModal" tabindex="-1" aria-labelledby="modalLabel"
-                            aria-hidden="true">
+                            aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
@@ -187,58 +186,58 @@
                                                 <button type="button" class="btn btn-primary next-step">Suivant</button>
                                             </div>
 
-                                            <!-- Étape 2 -->
                                             <div class="step step-2 d-none">
                                                 <h5>Détails du Don</h5>
-                                                <div class="mb-3">
-                                                    <label for="type_don" class="form-label">Type de Don:</label>
-                                                    <select id="typeDonSelect" name="type_don" class="form-control">
-                                                        <option value="" selected disabled>Choisissez un type de don
-                                                        </option>
+                                                <!-- Sélecteur de type de don -->
+                                                <div class="selectdiv mb-3">
+                                                    <select id="typeDonSelect" name="type_don" class="custom-select">
+                                                        <option value="" selected disabled>Choisissez un type de don</option>
                                                         @foreach ($typeConversion as $typeDons)
                                                             <option value="{{ $typeDons['id'] }}"
-                                                                data-choix="{{ $typeDons['choix'] }}"
-                                                                data-quantite="{{ $typeDons['quantite'] }}"
-                                                                data-valeur="{{ $typeDons['valeur_unitaire'] }}">
+                                                                    data-choix="{{ $typeDons['choix'] }}"
+                                                                    data-quantite="{{ $typeDons['quantite'] }}"
+                                                                    data-valeur="{{ $typeDons['valeur_unitaire'] }}">
                                                                 {{ $typeDons['type_don'] }}
                                                             </option>
                                                         @endforeach
                                                     </select>
                                                 </div>
-
-
+                                            
                                                 <!-- Choix du type de don (Caché par défaut) -->
-                                                <div id="choixContainer" style="display:none;">
+                                                <div id="choixContainer" class="mb-3" style="display:none;">
                                                     @foreach ($choixDons as $choix)
                                                         <div class="form-check form-check-primary">
                                                             <label class="form-check-label">
                                                                 <input type="checkbox" disabled name="choix"
-                                                                    value="{{ $choix['choix'] }}"
-                                                                    class="form-check-input choixMateriel"
-                                                                    data-choix="{{ $choix['choix'] }}">
+                                                                       value="{{ $choix['choix'] }}"
+                                                                       class="form-check-input choixMateriel"
+                                                                       data-choix="{{ $choix['choix'] }}">
                                                                 {{ $choix['choix'] }}
                                                             </label>
                                                         </div>
                                                     @endforeach
                                                 </div>
+                                            
                                                 <!-- Champ Quantité (Caché par défaut) -->
                                                 <div id="quantiteContainer" class="mb-3" style="display:none;">
                                                     <label for="quantite" class="form-label">Quantité:</label>
-                                                    <input type="number" class="form-control" id="quantite"
-                                                        name="quantite">
+                                                    <input type="number" class="form-control" id="quantite" name="quantite">
                                                 </div>
+                                            
                                                 <!-- Champ Argent (Caché par défaut) -->
                                                 <div id="moneyContainer" class="mb-3" style="display:none;">
                                                     <label for="montant" class="form-label">Montant (Ar):</label>
-                                                    <input type="number" class="form-control" id="montant"
-                                                        name="montant" step="0.01">
+                                                    <input type="number" class="form-control" id="montant" name="montant" step="0.01">
                                                 </div>
-
-
-                                                <button type="button"
-                                                    class="btn btn-secondary prev-step">Précédent</button>
-                                                <button type="button" class="btn btn-primary next-step">Suivant</button>
+                                            
+                                                <!-- Zone de navigation des étapes -->
+                                                <div class="step-navigation d-flex justify-content-between mt-4">
+                                                    <button type="button" class="btn btn-secondary prev-step">Précédent</button>
+                                                    <button type="button" class="btn btn-primary next-step">Suivant</button>
+                                                </div>
                                             </div>
+                                            
+
 
                                             <!-- Étape 3 -->
                                             <div class="step step-3 d-none">
@@ -253,9 +252,10 @@
                                 </div>
                             </div>
                         </div>
+
                     </div>
                     <div class="table-responsive">
-                        <table class="table table-striped">
+                        <table id="donsTable" class="table table-border table-bordered table-hover">
                             <thead>
                                 <tr>
                                     <th>#</th>
@@ -282,23 +282,21 @@
                                             <td>{{ \Carbon\Carbon::parse($don['date_don'])->locale('fr')->isoFormat('DD MMMM YYYY') }}
                                             </td>
                                             <td>
-                                                <form action="{{ route('cerfication.pdf') }}" method="POST" id="pdfForm">
+                                                <form action="{{ route('cerfication.pdf') }}" method="POST"
+                                                    id="pdfForm">
                                                     @csrf
-                                                    <input type="hidden" name="personne" value="{{ json_encode($don['personnes']) }}">
-                                    
+                                                    <input type="hidden" name="personne"
+                                                        value="{{ json_encode($don['personnes']) }}">
                                                     <button type="submit" class="btn btn-info btn-lg">
                                                         <i class="fas fa-file-pdf me-2"></i> Certificat en PDF
                                                     </button>
                                                 </form>
                                             </td>
-
                                         </tr>
                                     @endforeach
                                 @endif
                             </tbody>
                         </table>
-
-
                     </div>
                 </div>
             </div>
