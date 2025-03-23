@@ -313,7 +313,10 @@
                 language: {
                     url: 'https://cdn.datatables.net/plug-ins/1.12.1/i18n/fr_fr.json'
                 },
-                columnDefs: [{
+                lengthMenu: [[5, 10, 25, -1], [5, 10, 25, "Tout"]], // Ajout de 5 dans les options
+                pageLength: 5, // Définit 5 comme valeur par défaut
+                columnDefs: [
+                    {
                         targets: [0],
                         orderData: [0, 1]
                     },
@@ -329,6 +332,7 @@
             });
         });
     </script>
+    
     {{-- 
     <!-- Script pour la navigation entre les étapes et l'affichage conditionnel -->
     <script>
