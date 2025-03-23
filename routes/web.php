@@ -10,7 +10,7 @@ Route::get('/', [BudgetController::class, 'redirect'])->name('redirection'); // 
 Route::get('/parametres', [BudgetController::class, 'parametres'])->name('parametres');
 // web.php
 Route::post('/export-pdf', [ExportController::class, 'exportPdf'])->name('export.pdf');
-Route::post('/certificat-pdf', [ExportController::class, 'certificat'])->name('cerfication.pdf');
+Route::post('/certificat-pdf', [ExportController::class, 'certificat'])->name('certification.pdf');
 Route::prefix('projets')->group(function () {
     // BudgetController
     Route::get('/', [BudgetController::class, 'index'])->name('budgets.index');  // Liste des projets
@@ -25,7 +25,9 @@ Route::prefix('projets')->group(function () {
     // Dons Controller
 
     Route::get('/{nom_projet}', [DonsController::class, 'viewDons'])->name('dons.pages'); // Voir les détails d'un projet
-    Route::post('/enregistre_dons', [DonsController::class, 'store'])->name('dons.save'); // Voir les détails d'un projet
+    Route::post('/enregistre_dons', [DonsController::class, 'store'])->name('dons.save'); 
+    Route::put('/update_dons', [DonsController::class, 'updateDons'])->name('dons.update');
+
 
 
 });

@@ -115,6 +115,7 @@ class BudgetController extends Controller
     {
         $budget = $this->budgetService->getBudgetByName($nom_projet);
 
+
         $navigation = $this->budgetService->navigation();
         if (!$budget) {
             return redirect()->route('parametres')->with('error', 'Budget introuvable.');

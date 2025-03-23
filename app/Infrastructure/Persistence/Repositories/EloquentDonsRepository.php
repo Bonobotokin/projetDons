@@ -76,21 +76,20 @@ class EloquentDonsRepository implements DonRepository
                 'conversion_dons.choix',
                 DB::raw('SUM(CASE WHEN conversion_dons.choix = "Argent" THEN dons.montant ELSE 0 END) as total_montant'),
                 DB::raw('SUM(CASE WHEN conversion_dons.choix = "Matériel" THEN (conversion_dons.quantite - dons.quantite) ELSE 0 END) as quantite_restante_materiel'),
-                DB::raw('SUM(CASE WHEN conversion_dons.choix = "Argent" THEN (conversion_dons.valeur_unitaire - dons.montant) ELSE 0 END) as quantite_restante_argent')
+                DB::raw('SUM(CASE WHEN conversion_dons.choix = "Matériel" THEN (dons.quantite * conversion_dons.valeur_unitaire) ELSE 0 END) as total_montant_materiel')
             )
             ->where('conversion_dons.budget_id', $budget_id)
-            ->groupBy('conversion_dons.type_don', 'conversion_dons.choix', 'conversion_dons.valeur_unitaire')
+            ->groupBy('conversion_dons.type_don', 'conversion_dons.choix')
             ->get();
 
-        // Convertir le résultat en tableau associatif pour faciliter l'utilisation dans la vue
+        // Convertir en tableau associatif pour utilisation simplifiée dans la vue
         $result = [];
         foreach ($totals as $row) {
             $result[$row->type_don] = [
-                'total_montant'     => $row->choix === "Argent" ? $row->total_montant : null,
-                'quantite_restante' => $row->choix === "Matériel" ? $row->quantite_restante_materiel : ($row->choix === "Argent" ? $row->quantite_restante_argent : null),
+                'total_montant'         => $row->choix === "Argent" ? $row->total_montant : $row->total_montant_materiel,
+                'quantite_restante'     => $row->choix === "Matériel" ? $row->quantite_restante_materiel : null,
             ];
         }
-
 
         return $result;
     }

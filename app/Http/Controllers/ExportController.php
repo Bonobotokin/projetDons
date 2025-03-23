@@ -64,7 +64,13 @@ class ExportController extends Controller
 
     public function certificat(Request $request)
     {
-        $personne = json_decode($request->personne, true);
+        $personne = json_decode($request->input('personne'), true);
+    
+    // Vérification des données
+    if (is_null($personne)) {
+        dd("Échec du décodage JSON : " . $request->input('personne'));
+    }
+
         return view('budget.certification', compact('personne'));
         // $pdf = PDF::loadView('budget.certification', compact('personne'))
         //     ->setPaper('A4', 'landscape');

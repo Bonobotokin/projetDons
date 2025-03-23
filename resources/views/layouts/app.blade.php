@@ -439,6 +439,38 @@
     </script>
 
 
+               
+                                
+<script>
+    // Fonction pour mettre à jour l'état des champs en fonction de la sélection
+    function updateFieldsBasedOnChoice() {
+        const choix = document.getElementById('choix').value;
+        const montantField = document.getElementById('montant');
+        const quantiteField = document.getElementById('quantite');
+
+        if (choix === 'Matériel') {
+            montantField.disabled = false;
+            quantiteField.disabled = true;
+        } else if (choix === 'Argent') {
+            montantField.disabled = true;
+            quantiteField.disabled = false;
+        } else {
+            montantField.disabled = false;
+            quantiteField.disabled = false;
+        }
+    }
+
+    // Appeler la fonction dès que la page est chargée pour chaque modal
+    document.addEventListener('DOMContentLoaded', function () {
+        const choiceSelects = document.querySelectorAll('#choix');
+        choiceSelects.forEach(select => {
+            updateFieldsBasedOnChoice(select); // On appelle la fonction pour chaque modal au démarrage
+            select.addEventListener('change', function() {
+                updateFieldsBasedOnChoice(select); // Mise à jour lorsque l'utilisateur change de sélection
+            });
+        });
+    });
+</script>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {

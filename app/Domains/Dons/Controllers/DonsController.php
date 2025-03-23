@@ -4,6 +4,7 @@ namespace App\Domains\Dons\Controllers;
 
 use App\Domains\Budget\Services\BudgetService;
 use App\Domains\ConversionDon\Services\ConversionDonService;
+use App\Domains\Dons\Models\Don;
 use App\Domains\Dons\Services\DonsService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -30,30 +31,31 @@ class DonsController extends Controller
 
     public function viewDons($nom_projet)
     {
-        
+
         $budget = $this->budgetService->getBudgetByName($nom_projet);
 
 
-        if(is_null($budget))
-        {
-            
-        return redirect()->route('parametres')->with('success', 'Redirection effectuée.');
+        $budgets = $this->budgetService->getAll();
+        if (is_null($budget)) {
+
+            return redirect()->route('parametres')->with('success', 'Redirection effectuée.');
         }
 
         $typeConversion = $this->conversionDonService->getDonsByIdBudget($budget["id"]);
 
 
         $getChoixDons = $this->conversionDonService->getTypeChoixDons($budget["id"]);
-        
+
         $donsAll = $this->donsService->getDonsByIdBudget($budget["id"]);
 
         $navigation = $this->budgetService->navigation();
-        
+
         $totals = $this->donsService->getDonsWithTotals($budget["id"]);
 
-        
+        // dd($dons);
         return view('budget.show', [
             'budget' => $budget,
+            'budgets' => $budgets,
             'navigation' => $navigation,
             'dons' => $donsAll,
             'typeConversion' => $typeConversion,
@@ -66,19 +68,12 @@ class DonsController extends Controller
     public function store(Request $request)
     {
         DB::beginTransaction();
-        
+
         try {
             $data = $request->all();
             $choix = $request['choix'];
             $budgetId = (int) $request['budger_id'];
-           
-            // Gestion de la conversion de don personnalisée
-            // if ($request->filled('type_don_2')) {
-            //     $this->handleCustomDonConversion($request, $budgetId, $data);
-            // }
 
-            // Traitement principal du don
-            
             $this->processDon($choix, $data, $budgetId);
 
             DB::commit();
@@ -126,13 +121,57 @@ class DonsController extends Controller
     private function processDon(string $choix, array $data, int $budgetId): void
     {
         $quantity = ((int) $data["quantite"]) ?  ((int) $data["quantite"]) :  (float) $data["montant"];
-        
+
         $amount = ($choix === "Argent")
             ? $quantity
             : $this->conversionDonService->getTotalValue($data["type_don"], $quantity);
-        
+
         $this->donsService->createDon($data, $amount);
-        
+
         $this->budgetService->updateBudget($budgetId, $amount);
+    }
+
+
+
+    public function updateDons(Request $request)
+    {
+        try {
+            $data = $request->all();
+
+            // Nettoyer le montant_total pour supprimer les séparateurs
+            $data['montant'] = str_replace(',', '', $data['montant']); // Supprime les virgules
+            $data['montant'] = floatval($data['montant']);
+            $choix = $request['choix'];
+            $budgetId = (int) $request['budger_id'];
+
+            $quantity = ((int) $data["quantite"]) ? ((int) $data["quantite"]) : (float) $data["montant"];
+
+            $amount = ($choix === "Argent")
+                ? $quantity
+                : $this->conversionDonService->getTotalValue($data["type_don"], $quantity);
+
+            // $this->donsService->createDon($data, $amount);
+
+            $dons = Don::findOrFail($data['don_id']);
+            $dons->personnes = $data['personnes'];
+            $dons->telephone = $data['telephone'];
+            $dons->type_don = $data['type_don'];
+            $dons->choix = $choix;
+            $dons->quantite = $data['quantite'];
+            $dons->date_don = $data['date_don'];
+            $dons->montant = $data["montant"];
+            $dons->save();
+
+            $this->budgetService->updateBudget($budgetId, $amount);
+            return redirect()->back()
+            ->with('success', 'Dons mis à jour avec succès!')
+            ->with('budget', $budget ?? null);
+            // Optionnel : Retourner une réponse de succès
+            
+        } catch (\Exception $e) {
+            // Gérer l'exception
+            return redirect()->back()
+                ->with('error', 'Une erreur est survenue lors de la Mise à jour du don. Veuillez réessayer.');
+        }
     }
 }

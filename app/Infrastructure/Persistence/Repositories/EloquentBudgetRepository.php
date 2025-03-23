@@ -42,6 +42,7 @@ class EloquentBudgetRepository implements BudgetRepository
                         : $conversion->valeur_unitaire;
             
                     return [
+                        'id' => $conversion->id,
                         'type_don' => $conversion->type_don,
                         'choix' => $conversion->choix,
                         'quantite' => $conversion->quantite,
